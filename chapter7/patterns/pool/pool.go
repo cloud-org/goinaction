@@ -4,6 +4,7 @@ package pool
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"sync"
@@ -97,8 +98,19 @@ func (p *Pool) Close() {
 	// resources. If we don't do this, we will have a deadlock.
 	close(p.resources)
 
-	// Close the resources
-	for r := range p.resources {
-		r.Close()
+	for {
+		select {
+		case r, ok := <- p.resources: // p.resources 没有新的连接进入。而且又没有 close 的话，在这里会死锁
+			if !ok {
+				fmt.Printf("channel close\n")
+				return
+			}
+			fmt.Printf("r is %+v\n", r)
+			r.Close()
+		}
 	}
+	// Close the resources
+	//for r := range p.resources {
+	//	r.Close()
+	//}
 }

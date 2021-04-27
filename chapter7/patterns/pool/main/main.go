@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	maxGoroutines   = 25 // the number of routines to use.
+	maxGoroutines   = 2 // the number of routines to use.
 	pooledResources = 2  // number of resources in the pool
 )
 
